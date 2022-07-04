@@ -48,7 +48,7 @@ def job():
         req_media = twitter.post(url_media, files = files)
         media_id = json.loads(req_media.text)['media_id']
         print('画像の取得完了')
-        params = {'status':"NBA情報!!!\n\n{}\n\n記事↓↓↓\n{}".format(soup_title,soup_url),'media_ids':[media_id]}
+        params = {'status':"バスケ情報!!!\n\n{}\n\n記事↓↓↓\n{}".format(soup_title,soup_url),'media_ids':[media_id]}
         wb = openpyxl.load_workbook('nba.xlsx')
         time.sleep(1)
         ws = wb["Sheet1"]
