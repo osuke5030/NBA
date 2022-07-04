@@ -31,7 +31,7 @@ def job():
         url_media = "https://upload.twitter.com/1.1/media/upload.json"
         print("投稿準備完了")
         #nbaのページの指定
-        URL = 'https://basketballking.jp/news/category/world/nba'
+        URL = 'https://basketballking.jp/news/category/world?cx_cat=head'
         # リクエストヘッダの指定
         headers = {"User-Agent": "hoge"}
         response = requests.get(URL,  headers=headers)
@@ -77,7 +77,7 @@ def job():
         print("")
 
 def main():
-    schedule.every(1).minutes.do(job)
+    schedule.every(3).seconds.do(job)
     while True:
         schedule.run_pending()
         time.sleep(1)
