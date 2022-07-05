@@ -38,32 +38,33 @@ def job():
         r_text=response.text
         soup = BeautifulSoup(r_text, 'html.parser')
         soup_a=soup.find_all("div",attrs={"class","container"})[1]
-        soup_article=soup_a.find_all("div",attrs={"class","news-category-list__vertical"})[0]
-        soup_title=soup_article.find_all("div",attrs={"class","news-category-list__vertical__title"})[0].text.replace("\n","").replace("\t","")
-        soup_url=soup_article.find_all("a")[0]['href']
-        soup_img=soup_article.find("img")["src"]
-        response = requests.get(soup_img)
-        image = response.content
-        files = {"media" : image}
-        req_media = twitter.post(url_media, files = files)
-        media_id = json.loads(req_media.text)['media_id']
-        print('画像の取得完了')
-        params = {'status':"バスケ情報!!!\n\n{}\n\n記事↓↓↓\n{}".format(soup_title,soup_url),'media_ids':[media_id]}
-        wb = openpyxl.load_workbook('nba.xlsx')
-        time.sleep(1)
-        ws = wb["Sheet1"]
-        for i in range(wb['Sheet1'].max_row):
-            if ws.cell(row=i+1,column=1).value==params["status"]:
-                print("投稿済みです")
-                break    
-            elif i==wb['Sheet1'].max_row-1:   
-                ws.cell(row=wb['Sheet1'].max_row+1,column=1).value = params["status"]
-                wb.save('nba.xlsx')
-                print("保存しました")
-                twitter.post(url_text, params = params)
-                print("投稿しました") 
-        print("処理終了しました")
-        print("")
+        for i in range(10):
+            soup_article=soup_a.find_all("div",attrs={"class","news-category-list__vertical"})[i]
+            soup_title=soup_article.find_all("div",attrs={"class","news-category-list__vertical__title"})[0].text.replace("\n","").replace("\t","")
+            soup_url=soup_article.find_all("a")[0]['href']
+            soup_img=soup_article.find("img")["src"]
+            response = requests.get(soup_img)
+            image = response.content
+            files = {"media" : image}
+            req_media = twitter.post(url_media, files = files)
+            media_id = json.loads(req_media.text)['media_id']
+            print('画像の取得完了')
+            params = {'status':"バスケ情報!!!\n\n{}\n\n記事↓↓↓\n{}".format(soup_title,soup_url),'media_ids':[media_id]}
+            wb = openpyxl.load_workbook('nba.xlsx')
+            time.sleep(1)
+            ws = wb["Sheet1"]
+            for i in range(wb['Sheet1'].max_row):
+                if ws.cell(row=i+1,column=1).value==params["status"]:
+                    print("投稿済みです")
+                    break    
+                elif i==wb['Sheet1'].max_row-1:   
+                    ws.cell(row=wb['Sheet1'].max_row+1,column=1).value = params["status"]
+                    wb.save('nba.xlsx')
+                    print("保存しました")
+                    twitter.post(url_text, params = params)
+                    print("投稿しました") 
+            print("処理終了しました")
+            print("")
     except IndexError:
         print("INDEX エラーです")       
         print("")
@@ -77,7 +78,7 @@ def job():
         print("")
 
 def main():
-    schedule.every(3).seconds.do(job)
+    schedule.every(30).minutes.do(job)
     while True:
         schedule.run_pending()
         time.sleep(1)
